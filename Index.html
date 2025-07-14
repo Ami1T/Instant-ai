@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant AI</title>
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776e6;
+            --light: #f5f5f5;
+            --dark: #333;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 70px;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        
+        /* Auth Pages */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .auth-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .auth-box h1 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 28px;
+        }
+        
+        .auth-box p {
+            margin-bottom: 30px;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.2);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .auth-footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Main App */
+        .app-container {
+            display: none;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Home Page */
+        .home-page {
+            padding: 20px;
+        }
+        
+        .ai-input-container {
+            margin-bottom: 30px;
+        }
+        
+        .ai-input-box {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            min-height: 100px;
+            resize: none;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ai-input-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.2);
+            outline: none;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ai-response {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .ai-response h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .ai-response p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .ai-response pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            padding: 10px;
+            background-color: #ffeeee;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        /* Chat Page */
+        .chat-page {
+            padding: 20px;
+            height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .user-message {
+            background: #e3f2fd;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .ai-message {
+            background: #f1f1f1;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .send-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .send-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Upload Page */
+        .upload-page {
+            padding: 20px;
+        }
+        
+        .upload-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.05);
+        }
+        
+        .upload-area.active {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .upload-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        /* History Page */
+        .history-page {
+            padding: 20px;
+        }
+        
+        .history-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .history-question {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .history-answer {
+            color: #666;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .history-date {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .no-history {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        /* Profile Page */
+        .profile-page {
+            padding: 20px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: 600;
+            margin: 0 auto 20px;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .profile-email {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 12px;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .nav-item:hover {
+            color: var(--primary);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(110, 72, 170, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(110, 72, 170, 0.7); }
+            100% { box-shadow: 0 0 5px rgba(110, 72, 170, 0.5); }
+        }
+        
+        .glow-effect {
+            animation: glow 2s infinite;
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(110, 72, 170, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 750px;
+            }
+            
+            .message {
+                max-width: 60%;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .container {
+                max-width: 970px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1170px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Auth Pages -->
+    <div id="auth-container" class="auth-container">
+        <div id="login-box" class="auth-box">
+            <h1>Welcome Back</h1>
+            <p>Login to access your Instant AI account</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="#" id="show-register">Register</a>
+            </div>
+        </div>
+        
+        <div id="register-box" class="auth-box" style="display: none;">
+            <h1>Create Account</h1>
+            <p>Register to start using Instant AI</p>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" class="form-control" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" class="form-control" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <div class="auth-footer">
+                Already have an account? <a href="#" id="show-login">Login</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App -->
+    <div id="app-container" class="app-container">
+        <div class="header">
+            <h1 id="page-title">Instant AI</h1>
+            <div class="user-avatar" id="user-avatar">U</div>
+        </div>
+        
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="ai-input-container">
+                    <textarea id="ai-input" class="ai-input-box" placeholder="Ask me anything... (technical questions, general knowledge, math problems, etc.)"></textarea>
+                    <button id="submit-question" class="submit-btn">Get Answer</button>
+                </div>
+                <div id="ai-response" class="ai-response" style="display: none;"></div>
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            
+            <!-- Chat Page -->
+            <div id="chat-page" class="page">
+                <div class="chat-container" id="chat-container">
+                    <div class="message ai-message">
+                        Hello! I'm your AI assistant. How can I help you today?
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Type your message...">
+                    <button id="send-btn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            
+            <!-- Upload Page -->
+            <div id="upload-page" class="page">
+                <div class="upload-container">
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Drag & Drop your file here</div>
+                        <div class="upload-hint">or click to browse files (PDF, JPG, PNG)</div>
+                        <input type="file" id="file-input" class="file-input" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                    <button id="upload-btn" class="upload-btn" disabled>Upload & Process</button>
+                    <div id="file-info" class="file-info"></div>
+                    <div id="upload-response" class="ai-response" style="display: none; margin-top: 20px;"></div>
+                </div>
+            </div>
+            
+            <!-- History Page -->
+            <div id="history-page" class="page">
+                <div class="history-list" id="history-list">
+                    <div class="no-history">No history yet. Ask something to get started!</div>
+                </div>
+            </div>
+            
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profile-avatar">U</div>
+                    <div class="profile-name" id="profile-name">User Name</div>
+                    <div class="profile-email" id="profile-email">user@example.com</div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="queries-count">0</div>
+                            <div class="stat-label">Queries</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="uploads-count">0</div>
+                            <div class="stat-label">Uploads</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="chats-count">0</div>
+                            <div class="stat-label">Chats</div>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="#" class="nav-item active" data-page="home-page">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" data-page="chat-page">
+                <i class="fas fa-comment-dots"></i>
+                <span>Chat</span>
+            </a>
+            <a href="#" class="nav-item" data-page="upload-page">
+                <i class="fas fa-upload"></i>
+                <span>Upload</span>
+            </a>
+            <a href="#" class="nav-item" data-page="history-page">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="#" class="nav-item" data-page="profile-page">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // API Configuration
+        const API_KEY = "AIzaSyBWTHtaGGwFm3Z0O0vOY8t4yw70goI0ZZ0";
+        const API_URL = "https://aistudio.google.com/apikey";
+        
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const loginBox = document.getElementById('login-box');
+        const registerBox = document.getElementById('register-box');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const userAvatar = document.getElementById('user-avatar');
+        const pageTitle = document.getElementById('page-title');
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+        
+        // Home Page
+        const aiInput = document.getElementById('ai-input');
+        const submitQuestion = document.getElementById('submit-question');
+        const aiResponse = document.getElementById('ai-response');
+        const loading = document.getElementById('loading');
+        
+        // Chat Page
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        // Upload Page
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInfo = document.getElementById('file-info');
+        const uploadResponse = document.getElementById('upload-response');
+        
+        // History Page
+        const historyList = document.getElementById('history-list');
+        
+        // Profile Page
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const queriesCount = document.getElementById('queries-count');
+        const uploadsCount = document.getElementById('uploads-count');
+        const chatsCount = document.getElementById('chats-count');
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        // App State
+        let currentUser = null;
+        let history = [];
+        let chatHistory = [];
+        let uploadHistory = [];
+        let selectedFile = null;
+        
+        // Initialize the app
+        function init() {
+            // Check if user is logged in (for demo purposes)
+            const demoUser = localStorage.getItem('instantAIUser');
+            if (demoUser) {
+                currentUser = JSON.parse(demoUser);
+                showApp();
+            } else {
+                showAuth();
+            }
+            
+            setupEventListeners();
+        }
+        
+        // Show authentication pages
+        function showAuth() {
+            authContainer.style.display = 'flex';
+            appContainer.style.display = 'none';
+        }
+        
+        // Show main app
+        function showApp() {
+            authContainer.style.display = 'none';
+            appContainer.style.display = 'block';
+            
+            // Update user info
+            updateUserInfo();
+            
+            // Load history
+            loadHistory();
+        }
+        
+        // Update user info in the app
+        function updateUserInfo() {
+            if (!currentUser) return;
+            
+            // Set avatar initials
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            userAvatar.textContent = initials;
+            profileAvatar.textContent = initials;
+            
+            // Set profile info
+            profileName.textContent = currentUser.name;
+            profileEmail.textContent = currentUser.email;
+            
+            // Update stats
+            queriesCount.textContent = history.filter(item => item.type === 'query').length;
+            uploadsCount.textContent = uploadHistory.length;
+            chatsCount.textContent = chatHistory.length;
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Auth navigation
+            showRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginBox.style.display = 'none';
+                registerBox.style.display = 'block';
+            });
+            
+            showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerBox.style.display = 'none';
+                loginBox.style.display = 'block';
+            });
+            
+            // Login form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                // Simple validation
+                if (!email || !password) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                // For demo purposes, just create a user
+                currentUser = {
+                    name: 'Demo User',
+                    email: email,
+                    password: password
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('instantAIUser', JSON.stringify(currentUser));
+                
+                // Show app
+                showApp();
+            });
+            
+            // Register form
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                // Validation
+                if (!name || !email || !password || !confirm) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                if (password !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                // For demo purposes, just create a user
+                currentUser = {
+                    name: name,
+                    email: email,
+                    password: password
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('instantAIUser', JSON.stringify(currentUser));
+                
+                // Show app
+                showApp();
+            });
+            
+            // Navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Get page to show
+                    const pageToShow = item.getAttribute('data-page');
+                    
+                    // Update active nav item
+                    navItems.forEach(navItem => navItem.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Update page title
+                    updatePageTitle(item.querySelector('span').textContent);
+                    
+                    // Show the selected page
+                    showPage(pageToShow);
+                });
+            });
+            
+            // Home page - submit question
+            submitQuestion.addEventListener('click', handleQuestionSubmit);
+            aiInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleQuestionSubmit();
+                }
+            });
+            
+            // Chat page - send message
+            sendBtn.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+            
+            // Upload page
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('active');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('active');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('active');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+            
+            uploadBtn.addEventListener('click', handleFileUpload);
+            
+            // Logout
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('instantAIUser');
+                currentUser = null;
+                history = [];
+                chatHistory = [];
+                uploadHistory = [];
+                showAuth();
+            });
+        }
+        
+        // Update page title
+        function updatePageTitle(title) {
+            pageTitle.textContent = title;
+        }
+        
+        // Show specific page
+        function showPage(pageId) {
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            
+            // Special handling for chat page - scroll to bottom
+            if (pageId === 'chat-page') {
+                setTimeout(() => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 100);
+            }
+        }
+        
+        // Call the AI API with improved error handling
+        async function callAIAPI(prompt, isChat = false) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }],
+                        temperature: 0.7
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    console.error('API Error:', data);
+                    // Return a more helpful error message based on the API response
+                    if (data.error && data.error.message) {
+                        return `API Error: ${data.error.message}`;
+                    }
+                    return `Sorry, there was an error processing your request (Status: ${response.status}). Please try again.`;
+                }
+                
+                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    return "Sorry, I received an unexpected response format from the API.";
+                }
+                
+                return data.choices[0].message.content;
+                
+            } catch (error) {
+                console.error('Network Error:', error);
+                // Provide a fallback response if the API is completely unavailable
+                return generateFallbackResponse(prompt);
+            }
+        }
+
+        // Fallback response generator when API fails
+        function generateFallbackResponse(prompt) {
+            // Simple math calculations as fallback
+            if (prompt.match(/\d+\s*[\+\-\*\/]\s*\d+/)) {
+                try {
+                    const result = eval(prompt);
+                    return `The answer to "${prompt}" is ${result}.`;
+                } catch (e) {
+                    // Continue to generic fallback
+                }
+            }
+            
+            // Common question fallbacks
+            const commonQuestions = {
+                "hello": "Hello! How can I help you today?",
+                "hi": "Hi there! What can I do for you?",
+                "how are you": "I'm just a computer program, but I'm functioning well! How can I assist you?",
+                "what's your name": "I'm Instant AI, your helpful assistant!",
+                "help": "I can answer questions, chat with you, and analyze files. What would you like to do?"
+            };
+            
+            const lowerPrompt = prompt.toLowerCase();
+            for (const [question, answer] of Object.entries(commonQuestions)) {
+                if (lowerPrompt.includes(question)) {
+                    return answer;
+                }
+            }
+            
+            // Generic fallback
+            return `I'm having trouble connecting to the AI service. Here's what I can tell you about "${prompt}": ` + 
+                   `This appears to be a ${prompt.length > 20 ? 'detailed' : 'brief'} question about ` +
+                   `${prompt.split(' ').length > 3 ? 'multiple topics' : 'a specific topic'}. ` +
+                   `Please try again later when the AI service is available.`;
+        }
+
+        // Handle question submission with improved error handling
+        async function handleQuestionSubmit() {
+            const question = aiInput.value.trim();
+            
+            if (!question) {
+                alert('Please enter a question');
+                return;
+            }
+            
+            loading.style.display = 'flex';
+            aiResponse.style.display = 'none';
+            
+            try {
+                const response = await callAIAPI(question);
+                
+                // Always display the response, even if it's an error message
+                aiResponse.innerHTML = formatAIResponse(question, response);
+                aiResponse.style.display = 'block';
+                
+                // Only add to history if it's not an error message
+                if (!response.startsWith("Sorry,") && !response.startsWith("API Error:")) {
+                    addToHistory(question, response, 'query');
+                }
+            } catch (error) {
+                aiResponse.innerHTML = `<div class="error-message">Unexpected error: ${error.message}</div>`;
+                aiResponse.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                aiInput.value = '';
+                aiResponse.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Format AI response to handle error messages differently
+        function formatAIResponse(question, response) {
+            if (response.startsWith("Sorry,") || response.startsWith("API Error:")) {
+                return `
+                    <h3>Error</h3>
+                    <p>Your question: <strong>${question}</strong></p>
+                    <div class="error-message">${response}</div>
+                    <p>Please try again or ask a different question.</p>
+                `;
+            }
+            
+            return `
+                <h3>AI Response</h3>
+                <p>You asked: <strong>${question}</strong></p>
+                <div>${response.replace(/\n/g, '<br>')}</div>
+            `;
+        }
+        
+        // Add to history
+        function addToHistory(question, answer, type) {
+            const historyItem = {
+                id: Date.now(),
+                type,
+                question,
+                answer,
+                date: new Date().toLocaleString()
+            };
+            
+            history.unshift(historyItem);
+            
+            // Update localStorage
+            if (currentUser) {
+                localStorage.setItem(`instantAIHistory_${currentUser.email}`, JSON.stringify(history));
+            }
+            
+            // Update UI if on history page
+            if (document.getElementById('history-page').classList.contains('active')) {
+                loadHistory();
+            }
+        }
+        
+        // Load history
+        function loadHistory() {
+            // Load from localStorage
+            if (currentUser) {
+                const savedHistory = localStorage.getItem(`instantAIHistory_${currentUser.email}`);
+                if (savedHistory) {
+                    history = JSON.parse(savedHistory);
+                }
+            }
+            
+            // Update UI
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="no-history">No history yet. Ask something to get started!</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-question">${item.question}</div>
+                    <div class="history-answer">${item.answer.replace(/<[^>]*>/g, '').substring(0, 100)}...</div>
+                    <div class="history-date">${item.date}</div>
+                `;
+                
+                historyItem.addEventListener('click', () => {
+                    // Show full answer in a modal-like view
+                    alert(`Question: ${item.question}\n\nAnswer: ${item.answer.replace(/<[^>]*>/g, '')}`);
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Handle sending chat message with improved error handling
+        async function handleSendMessage() {
+            const message = chatInput.value.trim();
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            // Add user message to chat
+            addChatMessage(message, 'user');
+            
+            // Clear input
+            chatInput.value = '';
+            
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message ai-message';
+            typingIndicator.innerHTML = '<i>AI is typing...</i>';
+            chatContainer.appendChild(typingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            try {
+                // Call the AI API
+                const response = await callAIAPI(message, true);
+                
+                // Remove typing indicator
+                chatContainer.removeChild(typingIndicator);
+                
+                // Add AI message to chat
+                addChatMessage(response, 'ai');
+                
+                // Add to chat history
+                chatHistory.push({
+                    user: message,
+                    ai: response,
+                    date: new Date().toLocaleString()
+                });
+                
+                // Save to localStorage
+                if (currentUser) {
+                    localStorage.setItem(`instantAIChats_${currentUser.email}`, JSON.stringify(chatHistory));
+                }
+            } catch (error) {
+                // Remove typing indicator
+                chatContainer.removeChild(typingIndicator);
+                
+                // Show error message
+                addChatMessage(`Sorry, I encountered an error. Please try again. (${error.message})`, 'ai');
+            }
+        }
+        
+        // Add message to chat UI
+        function addChatMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Handle file selection
+        function handleFileSelect(file) {
+            // Check file type
+            const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                alert('Please select a valid file type (PDF, JPG, PNG)');
+                return;
+            }
+            
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+            
+            selectedFile = file;
+            
+            // Update UI
+            fileInfo.innerHTML = `
+                <strong>Selected file:</strong> ${file.name}<br>
+                <strong>Type:</strong> ${file.type}<br>
+                <strong>Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB
+            `;
+            fileInfo.style.display = 'block';
+            uploadBtn.disabled = false;
+        }
+        
+        // Handle file upload with improved error handling
+        async function handleFileUpload() {
+            if (!selectedFile) {
+                alert('Please select a file first');
+                return;
+            }
+            
+            // Show loading
+            uploadResponse.style.display = 'none';
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            uploadBtn.disabled = true;
+            
+            try {
+                // In a real app, you would upload the file to a server for processing
+                // For this demo, we'll simulate processing with the API
+                const prompt = `I've uploaded a ${selectedFile.type} file named ${selectedFile.name}. ` +
+                              `Please analyze this file and provide insights. ` +
+                              `For PDFs, summarize the content. For images, describe what you see.`;
+                
+                // Call the AI API
+                const response = await callAIAPI(prompt);
+                
+                // Display response
+                uploadResponse.innerHTML = `
+                    <h3>File Analysis</h3>
+                    <p>Analysis of <strong>${selectedFile.name}</strong>:</p>
+                    <div>${response.replace(/\n/g, '<br>')}</div>
+                `;
+                uploadResponse.style.display = 'block';
+                
+                // Add to history
+                addToHistory(`Uploaded file: ${selectedFile.name}`, response, 'upload');
+                
+                // Add to upload history
+                uploadHistory.push({
+                    filename: selectedFile.name,
+                    type: selectedFile.type,
+                    date: new Date().toLocaleString()
+                });
+                
+                // Save to localStorage
+                if (currentUser) {
+                    localStorage.setItem(`instantAIUploads_${currentUser.email}`, JSON.stringify(uploadHistory));
+                }
+                
+                // Scroll to response
+                uploadResponse.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                uploadResponse.innerHTML = `<div class="error-message">Error processing file: ${error.message}</div>`;
+                uploadResponse.style.display = 'block';
+            } finally {
+                // Reset button
+                uploadBtn.innerHTML = 'Upload & Process';
+                uploadBtn.disabled = false;
+            }
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
